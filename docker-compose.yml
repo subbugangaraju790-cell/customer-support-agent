@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  memora-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - NODE_ENV=production
+    restart: always
+
+  # Optional Postgres container for production persistent storage
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: memora_ai
+      POSTGRES_USER: memora
+      POSTGRES_PASSWORD: memora_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Optional ChromaDB vector database container
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
+volumes:
+  postgres_data:
+  chroma_data:
